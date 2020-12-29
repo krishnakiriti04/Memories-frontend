@@ -10,6 +10,7 @@ import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import NotificationImportant from '@material-ui/icons/NotificationImportant';
+import AddIcon from "@material-ui/icons/Add"
 
 function ChatList({chats,newChatBtnFn,selectChatFn,userEmail,selectedChatIndex}) {
 
@@ -80,7 +81,7 @@ function ChatList({chats,newChatBtnFn,selectChatFn,userEmail,selectedChatIndex})
             color="primary"
             variant="contained"
             className={classes.newChatBtn}
-        >New Message</Button>
+        ><AddIcon></AddIcon> New Message  </Button>
         </main>
     )
 }
