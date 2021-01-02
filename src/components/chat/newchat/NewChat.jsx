@@ -14,11 +14,8 @@ const NewChat = ({goToChat,createChat, loggedUser}) => {
 
     const newchatSubmit = async (e) => {
         e.preventDefault();
-        const uname = users.filter(user=>user.email === email )[0].username;
-        console.log(uname);
-        setUsername(uname);
-        const chatexists = await chatExists();
         const dockey = getDockey();
+        const chatexists = await chatExists(dockey);
         chatexists ? goToChat(dockey,message) : createChat(dockey,message,email,username);
     }
 
@@ -37,15 +34,18 @@ const NewChat = ({goToChat,createChat, loggedUser}) => {
         return [firebase.auth().currentUser.email, email].sort().join(":");
     }
 
-    const chatExists = async () => {
-        const dockey = getDockey();
+    const chatExists = async (dockey) => {
         const chat = await firebase.firestore().collection("chats").doc(dockey).get();
         return chat.exists;
     }
 
     useEffect(()=>{
         getUsers();
-    },[users])
+        if(email!==""){
+            const uname = users.filter(user=>user.email === email )[0].username;
+            setUsername(uname);
+        }
+    },[users,email])
 
     return (
         <main className={classes.main}>

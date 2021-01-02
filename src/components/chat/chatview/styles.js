@@ -2,13 +2,13 @@ import { makeStyles } from '@material-ui/core/styles';
 
 export default makeStyles((theme) => ({
     content: {
-        height: 'calc(100vh - 110px)',
+        height: 'calc(100vh - 100px)',
         overflow: 'auto',
         padding: '25px',
         marginLeft: '300px',
         boxSizing: 'border-box',
         overflowY: 'scroll',
-        top: '60px',
+        top: '110px',
         width: 'calc(100% - 300px)',
         position: 'absolute',
         backgroundColor: 'white'

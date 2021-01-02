@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 export default makeStyles((theme) => ({
     root: {
         backgroundColor: theme.palette.background.paper,
-        height: 'calc(100% - 35px)',
+        height: 'calc(100% - 55px)',
         position: 'absolute',
         left: '0',
         width: '300px',
