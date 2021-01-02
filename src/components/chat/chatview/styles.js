@@ -41,12 +41,13 @@ export default makeStyles((theme) => ({
 
     chatHeader: {
         width: 'calc(100% - 301px)',
+        top: "61px",
         height: '50px',
         display: "flex",
         justifycontent: "spaceBetween",
         alignitems: "flex-start",
         backgroundColor: '#344195',
-        position: 'fixed',
+        position: 'absolute',
         marginLeft: '301px',
         fontSize: '18px',
         textAlign: 'center',

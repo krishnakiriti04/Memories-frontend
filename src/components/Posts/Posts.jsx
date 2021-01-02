@@ -4,7 +4,7 @@ import useStyles from "./styles";
 import  {useSelector} from "react-redux";
 import {Grid, CircularProgress} from "@material-ui/core";
 
-function Posts({setCurrentId}) {
+function Posts({setCurrentId, loggedUser}) {
     const classes =  useStyles();
     const posts = useSelector((state)=>state.posts.posts)
     //state.posts is the reducer we've combined in reducers folder
@@ -16,7 +16,7 @@ function Posts({setCurrentId}) {
                         {
                             posts.map((post)=>(
                                 <Grid item xs={12} sm={6} key={post._id}>
-                                    <Post post={post} setCurrentId={setCurrentId}/>
+                                    <Post post={post} setCurrentId={setCurrentId} loggedUser = {loggedUser}/>
                                 </Grid>
                         ))
                         }

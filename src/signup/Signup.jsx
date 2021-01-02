@@ -13,7 +13,9 @@ import firebase from "firebase"
 
 function Signup() {
 
+
     const [email,setEmail] = useState(null);
+    const [username,setUsername] = useState(null);
     const [password,setPassword] = useState(null);
     const [passwordconfirmation,setPasswordconfirmation] = useState(null);
     const [signupError,setSignuperror] = useState("");
@@ -32,16 +34,19 @@ function Signup() {
         firebase
             .auth()
             .createUserWithEmailAndPassword(email,password)
-            .then(authRes=>{
-                console.log(authRes);
+            .then(async authRes=>{
+              await authRes.user.updateProfile({
+                displayName:username
+              });
                 const userObj = {
-                    email : authRes.user.email
+                    email : authRes.user.email,
+                    username : authRes.user.displayName
                 };
                 firebase
                     .firestore()
                     .collection("users")
                     .doc(email)
-                    .set(userObj)
+                    .set({user : userObj})
                     .then(()=>{
                         history.push("/login");
                     }, (dbError)=>{
@@ -62,9 +67,13 @@ function Signup() {
             Sign Up!
           </Typography>
           <form onSubmit={(e) => submitSignup(e)} className={classes.form}>
+          <FormControl required fullWidth margin='normal'>
+              <InputLabel htmlFor='signup-username-input'>Enter Your Username</InputLabel>
+              <Input autoFocus onChange={(e) => setUsername(e.target.value)} id='signup-username-input'></Input>
+            </FormControl>
             <FormControl required fullWidth margin='normal'>
               <InputLabel htmlFor='signup-email-input'>Enter Your Email</InputLabel>
-              <Input autoFocus onChange={(e) => setEmail(e.target.value)} id='signup-email-input'></Input>
+              <Input onChange={(e) => setEmail(e.target.value)} id='signup-email-input'></Input>
             </FormControl>
             <FormControl required fullWidth margin='normal'>
               <InputLabel htmlFor='signup-password-input'>Create A Password</InputLabel>

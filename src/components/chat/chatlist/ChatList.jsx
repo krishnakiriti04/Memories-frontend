@@ -9,10 +9,10 @@ import useStyles from './styles';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import NotificationImportant from '@material-ui/icons/NotificationImportant';
+import Badge from '@material-ui/core/Badge';
 import AddIcon from "@material-ui/icons/Add"
 
-function ChatList({chats,newChatBtnFn,selectChatFn,userEmail,selectedChatIndex}) {
+function ChatList({chats,newChatBtnFn,selectChatFn,userEmail,selectedChatIndex, loggedUser}) {
 
     const classes = useStyles();
 
@@ -29,6 +29,7 @@ function ChatList({chats,newChatBtnFn,selectChatFn,userEmail,selectedChatIndex})
                     color="primary"
                     variant="contained"
                     className={classes.newChatBtn}
+                    startIcon={<AddIcon />}
                 >New Message</Button>
                 <List>
                     {
@@ -42,12 +43,12 @@ function ChatList({chats,newChatBtnFn,selectChatFn,userEmail,selectedChatIndex})
                                          <ListItemAvatar>
                                              <Avatar>
                                                  {
-                                                     _chat.users.filter(_usr => _usr !== userEmail)[0].split("")[0]
+                                                     _chat.users.filter(_usr =>_usr.email !== userEmail)[0].email.split("")[0]
                                                  }
                                              </Avatar>
                                          </ListItemAvatar>
                                          {/* display username */}
-                                         <ListItemText primary={_chat.users.filter(_usr => _usr !== userEmail)[0]}
+                                         <ListItemText primary={_chat.users.filter(_usr => _usr.username !== loggedUser)[0].username}
                                             secondary={
                                                 <>
                                                     <Typography component="span" color="textPrimary">
@@ -61,7 +62,7 @@ function ChatList({chats,newChatBtnFn,selectChatFn,userEmail,selectedChatIndex})
                                          </ListItemText>
                                          {
                                              _chat.receiverHasRead === false && !userIsSender(_chat) ? (<ListItemIcon>
-                                                 <NotificationImportant className={classes.unreadMessage}></NotificationImportant>
+                                                 <Badge badgeContent={1} className={classes.unreadMessage} color="secondary"></Badge>
                                              </ListItemIcon>) : null
                                          }
                                     </ListItem>
@@ -74,15 +75,18 @@ function ChatList({chats,newChatBtnFn,selectChatFn,userEmail,selectedChatIndex})
             </main>
         </div>
     ) : (
-        <main>
-        <Button
-            onClick={newChatBtnFn}
-            fullWidth
-            color="primary"
-            variant="contained"
-            className={classes.newChatBtn}
-        ><AddIcon></AddIcon> New Message  </Button>
-        </main>
+        <div className={classes.root}>
+            <main>
+            <Button
+                onClick={newChatBtnFn}
+                fullWidth
+                color="primary"
+                variant="contained"
+                className={classes.newChatBtn}
+                startIcon={<AddIcon />}
+            > New Message  </Button>
+            </main>
+        </div>
     )
 }
 

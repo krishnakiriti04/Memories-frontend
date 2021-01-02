@@ -7,29 +7,22 @@ export default makeStyles((theme) => ({
     appbar: {
         color: "white",
     },
-    menuButton: {
-        marginRight: theme.spacing(2),
+    listitem: {
+        fontFamily: "sanserif",
+        fontSize: "24px",
+        textTransform: "uppercase"
     },
-    title: {
-        flexGrow: 1,
-        cursor: "pointer"
-    },
-    chatbtn: {
-        cursor: "pointer"
-    },
-    linkText: {
-        textDecoration: `none`,
-        textTransform: `uppercase`,
-        color: `white`
-    },
-    navDisplayFlex: {
-        flexGrow: 1,
-        display: `flex`,
-        //justifyContent: `space-between`
-    },
-    navitems: {
-        flexGrow: 1,
+    navLeft: {
         display: "flex",
-        justifycontent: "flexStart"
+    },
+    navRight: {
+        display: "flex",
+        marginLeft: "auto",
+        justifycontent: "spaceBetween"
+    },
+    toolbar: {
+        display: "flex",
+        justifycontent: "spaceBetweem"
     }
+
 }))

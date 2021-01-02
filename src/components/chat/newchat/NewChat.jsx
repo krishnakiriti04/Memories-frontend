@@ -1,34 +1,36 @@
-import React,{useState} from 'react'
+import React,{useState, useEffect} from 'react'
 import useStyles from "./styles";
-import { FormControl, InputLabel, Input, Button, Paper, CssBaseline, Typography } from '@material-ui/core';
+import { FormControl, InputLabel, Input, Button, Paper, CssBaseline, Typography, Select, MenuItem } from '@material-ui/core';
 import firebase from "firebase";
 
 
-const NewChat = ({goToChat,createChat}) => {
+const NewChat = ({goToChat,createChat, loggedUser}) => {
     const classes = useStyles();
 
     const [email,setEmail] = useState("");
     const [message,setMessage] = useState("");
+    const [username,setUsername] = useState("");
+    const [users,setUsers] = useState([]);
 
     const newchatSubmit = async (e) => {
         e.preventDefault();
-        const userexists = await userExists();
-        if(userexists){
-            const chatexists = await chatExists();
-            const dockey = getDockey();
-            chatexists ? goToChat(dockey,message) : createChat(dockey,message,email);
-        }
+        const uname = users.filter(user=>user.email === email )[0].username;
+        console.log(uname);
+        setUsername(uname);
+        const chatexists = await chatExists();
+        const dockey = getDockey();
+        chatexists ? goToChat(dockey,message) : createChat(dockey,message,email,username);
     }
 
-    const userExists = async () => {
+    const getUsers = async () => {
         const usersList = await firebase
-            .firestore()
+            .firestore()    
             .collection("users")
             .get();
-        const exists = usersList.docs
-            .map(_doc=>_doc.data().email)
-            .includes(email)
-        return exists;
+        const allusers = usersList.docs
+            .map(_doc=>_doc.data().user)
+            //.find(user=> user.email === email)
+            setUsers(allusers);
     }
 
     const getDockey = () =>{
@@ -41,6 +43,10 @@ const NewChat = ({goToChat,createChat}) => {
         return chat.exists;
     }
 
+    useEffect(()=>{
+        getUsers();
+    },[users])
+
     return (
         <main className={classes.main}>
             <CssBaseline></CssBaseline>
@@ -49,16 +55,19 @@ const NewChat = ({goToChat,createChat}) => {
                 <form className={classes.form} onSubmit={(e)=>newchatSubmit(e)}>
                     <FormControl fullWidth>
                         <InputLabel htmlFor="newchat-username">Enter friend's email</InputLabel>
-                        <Input
+                        <Select
                         onChange={(e)=>setEmail(e.target.value)}
                         value={email}
                         className={classes.input}
-                        autoFocus
                         >
-                        </Input>
+                            <MenuItem value="" disabled>select user</MenuItem>
+                        {
+                            users.map(user=> user.email!==loggedUser ? <MenuItem key={user.email} value={user.email}>{user.email}</MenuItem>: null)
+                        }
+                        </Select>
                     </FormControl>
                     <FormControl fullWidth>
-                        <InputLabel htmlFor="newchat-username">Enter your message</InputLabel>
+                        <InputLabel htmlFor="newchat-message">Enter your message</InputLabel>
                         <Input
                         onChange={(e)=>setMessage(e.target.value)}
                         required

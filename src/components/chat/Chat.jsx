@@ -1,8 +1,8 @@
 import React,{useState, useEffect} from 'react';
 import ChatList from "./chatlist/ChatList";
 import {useHistory} from "react-router-dom";
-import useStyles from "./styles";
-import Button from "@material-ui/core/Button";
+// import useStyles from "./styles";
+// import Button from "@material-ui/core/Button";
 import firebase from "firebase";
 import ChatView from "./chatview/ChatView";
 import ChatTextBox from "./chattextbox/ChatTextBox";
@@ -15,9 +15,10 @@ const Chat = () => {
     const [selectedChat,setSelectedChat] = useState(null);
     const [newChatFormVisible,setNewChatFormVisible] = useState(null);
     const [chats,setChats] = useState([]);
+    const [username,setUsername] = useState(null);
     const history = useHistory();
 
-    const classes = useStyles();
+    // const classes = useStyles();
 
     const newChatBtnClicked = () =>{
         setNewChatFormVisible(true)
@@ -28,10 +29,15 @@ const Chat = () => {
         return chats[chatIndex].messages[chats[chatIndex].messages.length-1].sender !== email
     }
 
+    
+    //function to get Document Key which is in the format user1:user2 (in alphabatical order)
+    const getDocKey = (friendsEmail) => {
+        return [email,friendsEmail].sort().join(":");
+    }
+
     const messageRead = (chatIndex) => {
         // const chatIndex = selectedChat;
-     
-        const dockey = getDocKey(chats[chatIndex].users.filter(_usr=> _usr !== email)[0])
+        const dockey = getDocKey(chats[chatIndex].users.filter(_usr=> _usr.email !== email)[0].email)
         if(clickedChatByNotSender(chatIndex)){
             firebase
                 .firestore()
@@ -47,28 +53,22 @@ const Chat = () => {
         messageRead(chatIndex);
     }
 
-    const signOutFn = () => firebase.auth().signOut()
-
-    const submitMessageFn = (chatMessage) => {
-        const docKey = getDocKey(chats[selectedChat].users.filter((_usr)=> _usr !== email)[0])
-        firebase
-            .firestore()
-            .collection("chats")
-            .doc(docKey)
-            .update({
-                messages : firebase.firestore.FieldValue.arrayUnion({
+    const submitMessageFn = (chatMessage,chatindex) => {
+        if(selectedChat!==null || chatindex >=0){
+            const docKey =  getDocKey(chats[chatindex>=0 ? chatindex : selectedChat].users.filter(_usr => _usr.email !== email)[0].email) 
+            firebase
+                .firestore()
+                .collection("chats")
+                .doc(docKey)
+                .update({
+                    messages : firebase.firestore.FieldValue.arrayUnion({
                     message : chatMessage,
                     sender : email,
                     timestamp : Date.now()
-                }),
-                receiverHasRead : false
-            })
-
-    }
-
-    //function to get Document Key which is in the format user1:user2 (in alphabatical order)
-    const getDocKey = (friendsEmail) => {
-        return [email,friendsEmail].sort().join(":");
+                    }),
+                    receiverHasRead : false
+                })
+        }
     }
 
     const userClickedInputFn = () => {
@@ -78,21 +78,23 @@ const Chat = () => {
 
     //dockey is coming from NewChat component
     const goToChat = async (dockey,message) => {
-        const existingchat = await firebase.firestore().collection("chats").get()
-        const chatindex = existingchat.docs.findIndex(_doc=>_doc.id === dockey )
+        const existingchat = await firebase.firestore().collection("chats").where('users',"array-contains",{email,username}).get();
+        const chatindex = existingchat.docs.findIndex(_doc=>_doc.id === dockey );
         setSelectedChat(chatindex);
         setNewChatFormVisible(false);
-        submitMessageFn(message);
+        if(message){
+            submitMessageFn(message,chatindex)
+        }    
     }
 
     //dockey is coming from NewChat component
-    const createChat = async (dockey,message, friendsEmail) => {
+    const createChat = async (dockey,message, friendsEmail,friendsUsername) => {
         await firebase.firestore().collection("chats").doc(dockey).set({
             messages:[{
                 message:message,
                 sender: email
             }],
-            users:[email,friendsEmail],
+            users:[{email,username},{email:friendsEmail,username:friendsUsername}],
             receiverHasRead : false,
         })
         //after creating we need to open the created chat
@@ -106,10 +108,11 @@ const Chat = () => {
                 if(!_usr){
                     history.push("/login");
                 }else{
+                    setUsername(_usr.displayName);
                     await firebase
                             .firestore()
                             .collection("chats")
-                            .where('users',"array-contains",_usr.email)
+                            .where('users',"array-contains",{email:_usr.email,username:_usr.displayName})
                             .onSnapshot(async res=>{
                                 const chatsArr = res.docs.map(_doc=>_doc.data());
                                 await setEmail(_usr.email);
@@ -121,19 +124,21 @@ const Chat = () => {
 
     return (
         <>
-        <Navbar></Navbar>
+        <Navbar loggedUser={username}></Navbar>
         <div>
             <ChatList 
             newChatBtnFn = {newChatBtnClicked}
             selectChatFn = {selectChat}
             chats = {chats}
             userEmail = {email}
+            loggedUser = {username}
             selectedChatIndex = {selectedChat}
             >
             </ChatList>
             {
                 newChatFormVisible ? null : 
                 (<ChatView userEmail = {email}
+                    loggedUser = {username}
                     chats = {chats[selectedChat]}
                 ></ChatView>)
             }
@@ -141,9 +146,9 @@ const Chat = () => {
                 (!newChatFormVisible && selectedChat !== null) ? <ChatTextBox submitMessageFn = {submitMessageFn} userClickedInputFn = {userClickedInputFn}></ChatTextBox> : null
             }
             {
-                newChatFormVisible ? <NewChat goToChat={goToChat} createChat={createChat}></NewChat> : null
+                newChatFormVisible ? <NewChat loggedUser={email} goToChat={goToChat} createChat={createChat}></NewChat> : null
             }
-            <Button className={classes.signOutBtn} variant="contained" onClick={signOutFn} >Sign Out</Button>
+            {/* <Button className={classes.signOutBtn} variant="contained" onClick={signOutFn} >Sign Out</Button> */}
         </div>
         </>
     )

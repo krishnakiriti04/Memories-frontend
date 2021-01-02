@@ -16,10 +16,12 @@ function App() {
   const history = useHistory();
 
   const [currentId, setCurrentId] = useState(null);
+  const [name,setName] = useState(null);
 
   useEffect(()=>{
     firebase.auth().onAuthStateChanged(_usr => {
       if(_usr){
+        setName(_usr.displayName);
         dispatch(getPosts());
       }else{
         history.push("/login");
@@ -30,7 +32,7 @@ function App() {
 
   return (
     <>
-    <Navbar />
+    <Navbar loggedUser={name}/>
     <Container maxwidth = "lg" >
       <AppBar position="static" className={classes.appBar} color="inherit">
         {/* <Typography variant="h2" align="center" className={classes.heading} >Memories</Typography>
@@ -38,12 +40,12 @@ function App() {
       </AppBar>
       <Grow in>
           <Container>
-            <Grid container justify="space-between" alignItems="strech" spacing={3}>
+            <Grid container justify="space-between" alignItems="stretch" spacing={3}>
                 <Grid item xs={12} sm={7}>
-                  <Posts setCurrentId={setCurrentId}/>
+                  <Posts setCurrentId={setCurrentId} loggedUser={name}/>
                 </Grid>
                 <Grid item xs={12} sm={4}>
-                  <PostForm currentId={currentId} setCurrentId={setCurrentId} />
+                  <PostForm currentId={currentId} setCurrentId={setCurrentId} loggedUser={name}/>
                 </Grid>
             </Grid>
           </Container>

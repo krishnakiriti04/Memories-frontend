@@ -4,7 +4,7 @@ import Avatar from "@material-ui/core/Avatar"
 import Typography from "@material-ui/core/Typography"
 
 
-const ChatView = ({chats,userEmail}) => {
+const ChatView = ({chats,userEmail,loggedUser}) => {
     const classes = useStyles();
 
     useEffect(()=>{
@@ -19,12 +19,12 @@ const ChatView = ({chats,userEmail}) => {
             <div className={classes.chatHeader}>
                 <Avatar>
                     {
-                        chats.users.filter((_user)=>_user !== userEmail)[0].split("")[0]
+                        chats.users.filter((_user)=>_user.email !== userEmail)[0].email.split("")[0]
                     }
                 </Avatar>
                 <Typography component="span" variant="h6" className={classes.sender}>
                     {
-                        chats.users.filter((_user)=> _user !== userEmail)[0]
+                        chats.users.filter((_user)=> _user.username !== loggedUser)[0].username
                     }
                 </Typography>
             </div>
@@ -40,10 +40,11 @@ const ChatView = ({chats,userEmail}) => {
                 }
             </main>
         </div>
-    ) : (
-        <main className={classes.content} id="chatview-container">
-        </main>
-    )
+    ) : null
+    // (
+    //     <main className={classes.content} id="chatview-container">
+    //     </main>
+    // )
 }
 
 export default ChatView

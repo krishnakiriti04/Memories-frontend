@@ -18,7 +18,7 @@ export default makeStyles((theme) => ({
     unreadMessage: {
         color: 'red',
         position: 'absolute',
-        top: '0',
-        right: '5px'
+        top: '20px',
+        right: '20px'
     }
 }))
