@@ -12,7 +12,8 @@ import Chat from "./components/chat/Chat";
 import reducers from "./reducers/index";
 import firebase from "firebase";
 
-const store = createStore(reducers, compose(applyMiddleware(thunk),window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()))
+const store = createStore(reducers, 
+  compose(applyMiddleware(thunk),typeof window.__REDUX_DEVTOOLS_EXTENSION__ === "undefined" ? a => a : window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()))
 
 firebase.initializeApp({
     apiKey: "AIzaSyBFSEKyLHVykaw5edd4v3GT9BohGYBgGjs",
