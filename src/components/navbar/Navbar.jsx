@@ -2,7 +2,6 @@ import React,{useState} from 'react';
 import {useHistory} from "react-router-dom";
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Button from "@material-ui/core/Button";
@@ -33,8 +32,8 @@ export default function Navbar({loggedUser}) {
           </List>
           {auth && (
             <div className={classes.navRight}>
-              <div style={{marginRight:"4px"}}>
-                {loggedUser}
+              <div className={classes.rightItems}>
+                <h4>{loggedUser}</h4>
                 <IconButton
                   aria-label="account of current user"
                   aria-controls="menu-appbar"

@@ -27,7 +27,6 @@ const Login = ()=> {
             .then(()=>{
                 history.push("/");
             },(err)=>{
-                console.log("error logging in",err);
                 setServerError(true);
             })
 

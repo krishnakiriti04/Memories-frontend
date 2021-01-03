@@ -10,10 +10,33 @@ export default makeStyles((theme) => ({
     listitem: {
         fontFamily: "sanserif",
         fontSize: "24px",
-        textTransform: "uppercase"
+        paddingLeft: "10px",
+        paddingRight: "10px",
+        textTransform: "uppercase",
+        [theme.breakpoints.down('xs')]: {
+            fontSize: "18px",
+            paddingLeft: "4px",
+            paddingRight: "4px",
+        },
+    },
+    rightItems: {
+        marginRight: "4px",
+        textTransform: "capitalize",
+        display: "flex",
+        justifycontent: "spaceBetween",
+        [theme.breakpoints.down('xs')]: {
+            fontSize: "18px",
+            marginRight: "0px",
+            padding: "0px"
+        },
     },
     navLeft: {
+
         display: "flex",
+        [theme.breakpoints.down('xs')]: {
+            marginRight: "0px",
+            padding: "0px"
+        },
     },
     navRight: {
         display: "flex",
