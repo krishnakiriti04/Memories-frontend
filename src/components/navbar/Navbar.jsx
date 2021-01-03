@@ -7,14 +7,26 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import Button from "@material-ui/core/Button";
 import useStyles from "./styles";
 import firebase from "firebase";
-import List from "@material-ui/core/List"
-import ListItem from "@material-ui/core/ListItem"
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
 
 
 export default function Navbar({loggedUser}) {
   const classes = useStyles();
   const [auth, setAuth] = useState(true);
   const history = useHistory();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   
   const handleSignout = () => {
     setAuth(false)
@@ -33,15 +45,32 @@ export default function Navbar({loggedUser}) {
           {auth && (
             <div className={classes.navRight}>
               <div className={classes.rightItems}>
-                <h4>{loggedUser}</h4>
                 <IconButton
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  color="inherit"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleMenu}
+                color="inherit"
                 >
                   <AccountCircle />
                 </IconButton>
+                <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={open}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={handleClose}>{loggedUser}</MenuItem>
+              </Menu>
               </div>
                 <Button
                   color="secondary"
